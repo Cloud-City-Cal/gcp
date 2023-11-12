@@ -1,0 +1,5 @@
+requests
+datetime
+google-cloud
+google-cloud-bigquery
+google-cloud-storage
