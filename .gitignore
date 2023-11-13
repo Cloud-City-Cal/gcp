@@ -159,11 +159,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-<<<<<<< HEAD
 *.json
 .DS_Store
 .idea
-=======
-credentials.json
-token.json
->>>>>>> 21e3505 (event+weather)
