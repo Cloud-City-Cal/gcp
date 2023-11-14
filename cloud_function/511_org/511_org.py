@@ -27,6 +27,8 @@ def insert_into_bigquery(request):
 
     res = requests.get(f"http://api.511.org/traffic/events?API_KEY={API_KEY}")
     res = json.loads(res.text.encode().decode("utf-8-sig"))
+    # Response format is described here
+    # https://511.org/sites/default/files/2023-10/511%20SF%20Bay%20Open%20Data%20Specification%20-%20Traffic.pdf
     client = bigquery.Client(project=project_id)
     for event in res["events"]:
         event_id = event["id"]
@@ -48,11 +50,9 @@ def insert_into_bigquery(request):
                 del event[key]
         created = datetime.strptime(event["created"], "%Y-%m-%dT%H:%MZ")
         event["created"] = created
-        updated = datetime.strptime(
-            event["updated"], "%Y-%m-%dT%H:%MZ"
-        )  # 2023-08-01T21:42Z
+        updated = datetime.strptime(event["updated"], "%Y-%m-%dT%H:%MZ")
         event["updated"] = updated
-        event_subtypes = str(event["event_subtypes"])  # list of string
+        event_subtypes = str(event["event_subtypes"])
         event["event_subtypes"] = event_subtypes
         event["geography"] = str(event["geography"])
         schedule = str(event["schedule"])

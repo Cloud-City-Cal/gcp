@@ -46,6 +46,54 @@ def insert_into_bigquery(request):
             response = requests.get(base_url, params=params)
             response.raise_for_status()
             weather_data = response.json()
+
+            """
+            Sample Output
+            {
+                "coord": {
+                    "lon": -122.16,
+                    "lat": 37.71
+                },
+                "weather": [
+                    {
+                    "id": 801,
+                    "main": "Clouds",
+                    "description": "few clouds",
+                    "icon": "02n"
+                    }
+                ],
+                "base": "stations",
+                "main": {
+                    "temp": 13.81,
+                    "feels_like": 13.34,
+                    "temp_min": 11.42,
+                    "temp_max": 16.15,
+                    "pressure": 1013,
+                    "humidity": 80
+                },
+                "visibility": 10000,
+                "wind": {
+                    "speed": 3.6,
+                    "deg": 320
+                },
+                "clouds": {
+                    "all": 20
+                },
+                "dt": 1699930356,
+                "sys": {
+                    "type": 2,
+                    "id": 2004596,
+                    "country": "US",
+                    "sunrise": 1699886792,
+                    "sunset": 1699923568
+                },
+                "timezone": -28800,
+                "id": 5392263,
+                "name": "San Leandro",
+                "cod": 200
+            }
+            """
+
             if "main" not in weather_data:
                 continue
             if "coord" in weather_data:
