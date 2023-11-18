@@ -1,7 +1,0 @@
-syntax = "proto3";
-package scheduler;
-
-message WeatherDataCollectionScheduledEvent {
-  float lon = 1;
-  float lat = 2;
-}

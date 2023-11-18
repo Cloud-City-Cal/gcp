@@ -21,8 +21,8 @@ TOPIC_ID: Topic ID of the published message
 @functions_framework.cloud_event
 def collect_weather_data(cloud_event: CloudEvent):
     response = requests.get(API_ENDPOINT, params={
-        "lon": cloud_event.data['message']['lon'],
-        "lat": cloud_event.data['message']['lat'],
+        "lon": cloud_event.data['message']['attributes']['lon'],
+        "lat": cloud_event.data['message']['attributes']['lat'],
         "appid": os.environ['API_KEY'],
         "units": "metric",
     })
