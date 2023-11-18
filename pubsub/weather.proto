@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+//import "bq_table.proto";
+//import "bq_field.proto";
+//package weather;
+
+message Weather {
+//  option (gen_bq_schema.bigquery_opts).table_name = "event";
+
+  Coord coord = 1;
+  repeated Weather weather = 2;
+  string base = 3;
+  Main main = 4;
+  uint32 visibility = 5;
+  Wind wind = 6;
+  optional Precipitation rain = 7;
+  optional Precipitation snow = 8;
+  Cloud clouds = 9;
+  int64 dt = 10;
+  Sys sys = 11;
+  int32 timezone = 12;
+  int64 id = 13;
+  string name = 14;
+  int32 cod = 15;
+
+  message Coord {
+    float lon = 1;
+    float lat = 2;
+  }
+
+  message Weather {
+    int64 id = 1;
+    string main = 2;
+    string description = 3;
+    string icon = 4;
+  }
+
+  message Main {
+    float temp = 1;
+    float feels_like = 2;
+    float temp_min = 3;
+    float temp_max = 4;
+    uint32 pressure = 5;
+    uint32 humidity = 6;
+    uint32 sea_level_pressure = 7 [json_name = "sea_level"];
+    uint32 ground_level_pressure = 8 [json_name = "grnd_level"];
+  }
+
+  message Wind {
+    float speed = 1;
+    uint32 deg = 2;
+    float gust = 3;
+  }
+
+  message Precipitation {
+    optional float last_1h = 1 [json_name = "1h"];
+    optional float last_3h = 2 [json_name = "3h"];
+  }
+
+  message Cloud {
+    uint32 all = 1;
+  }
+
+  message Sys {
+    int32 type = 1;
+    int64 id = 2;
+    string country = 3;
+    int64 sunrise = 4;
+    int64 sunset = 5;
+  }
+}
