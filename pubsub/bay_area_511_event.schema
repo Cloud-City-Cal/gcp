@@ -1,0 +1,318 @@
+[
+ {
+  "name": "url",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "jurisdiction_url",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "id",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "status",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "headline",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "event_type",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "severity",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "geography_point",
+  "type": "RECORD",
+  "mode": "NULLABLE",
+  "fields": [
+   {
+    "name": "coordinates",
+    "type": "FLOAT",
+    "mode": "REPEATED"
+   },
+   {
+    "name": "type",
+    "type": "STRING",
+    "mode": "NULLABLE"
+   }
+  ]
+ },
+ {
+  "name": "closure_geometry_point",
+  "type": "RECORD",
+  "mode": "NULLABLE",
+  "fields": [
+   {
+    "name": "coordinates",
+    "type": "FLOAT",
+    "mode": "REPEATED"
+   },
+   {
+    "name": "type",
+    "type": "STRING",
+    "mode": "NULLABLE"
+   }
+  ]
+ },
+ {
+  "name": "created",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "updated",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "schedule",
+  "type": "RECORD",
+  "mode": "NULLABLE",
+  "fields": [
+   {
+    "name": "recurring_schedules",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+     {
+      "name": "start_date",
+      "type": "STRING",
+      "mode": "NULLABLE"
+     },
+     {
+      "name": "end_date",
+      "type": "STRING",
+      "mode": "NULLABLE"
+     },
+     {
+      "name": "daily_start_time",
+      "type": "STRING",
+      "mode": "NULLABLE"
+     },
+     {
+      "name": "daily_end_time",
+      "type": "STRING",
+      "mode": "NULLABLE"
+     },
+     {
+      "name": "days",
+      "type": "STRING",
+      "mode": "REPEATED"
+     }
+    ]
+   },
+   {
+    "name": "exceptions",
+    "type": "STRING",
+    "mode": "REPEATED"
+   },
+   {
+    "name": "intervals",
+    "type": "STRING",
+    "mode": "REPEATED"
+   }
+  ]
+ },
+ {
+  "name": "timezone",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "description",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "event_subtypes",
+  "type": "STRING",
+  "mode": "REPEATED"
+ },
+ {
+  "name": "grouped_events",
+  "type": "STRING",
+  "mode": "REPEATED"
+ },
+ {
+  "name": "detour",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "roads",
+  "type": "RECORD",
+  "mode": "REPEATED",
+  "fields": [
+   {
+    "name": "name",
+    "type": "STRING",
+    "mode": "NULLABLE"
+   },
+   {
+    "name": "from",
+    "type": "STRING",
+    "mode": "NULLABLE"
+   },
+   {
+    "name": "to",
+    "type": "STRING",
+    "mode": "NULLABLE"
+   },
+   {
+    "name": "state",
+    "type": "STRING",
+    "mode": "NULLABLE"
+   },
+   {
+    "name": "direction",
+    "type": "STRING",
+    "mode": "NULLABLE"
+   },
+   {
+    "name": "impacted_lane_type",
+    "type": "STRING",
+    "mode": "NULLABLE"
+   },
+   {
+    "name": "road_advisory",
+    "type": "STRING",
+    "mode": "NULLABLE"
+   },
+   {
+    "name": "lane_status",
+    "type": "STRING",
+    "mode": "NULLABLE"
+   },
+   {
+    "name": "article",
+    "type": "STRING",
+    "mode": "NULLABLE"
+   },
+   {
+    "name": "areas",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+     {
+      "name": "id",
+      "type": "INTEGER",
+      "mode": "NULLABLE"
+     },
+     {
+      "name": "name",
+      "type": "STRING",
+      "mode": "NULLABLE"
+     },
+     {
+      "name": "url",
+      "type": "STRING",
+      "mode": "NULLABLE"
+     }
+    ]
+   },
+   {
+    "name": "lanes_open",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+   },
+   {
+    "name": "lanes_closed",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+   },
+   {
+    "name": "impacted_systems",
+    "type": "STRING",
+    "mode": "REPEATED"
+   },
+   {
+    "name": "restrictions",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+     {
+      "name": "restriction_type",
+      "type": "STRING",
+      "mode": "NULLABLE"
+     },
+     {
+      "name": "value",
+      "type": "FLOAT",
+      "mode": "NULLABLE"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "name": "areas",
+  "type": "RECORD",
+  "mode": "REPEATED",
+  "fields": [
+   {
+    "name": "id",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+   },
+   {
+    "name": "name",
+    "type": "STRING",
+    "mode": "NULLABLE"
+   },
+   {
+    "name": "url",
+    "type": "STRING",
+    "mode": "NULLABLE"
+   }
+  ]
+ },
+ {
+  "name": "attachments",
+  "type": "STRING",
+  "mode": "REPEATED"
+ },
+ {
+  "name": "source_type",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "source_id",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+  {
+  "name": "subscription_name",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "message_id",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "publish_time",
+  "type": "INTEGER",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "attributes",
+  "type": "JSON",
+  "mode": "NULLABLE"
+ }
+]
