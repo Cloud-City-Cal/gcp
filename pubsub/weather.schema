@@ -170,7 +170,7 @@
  },
  {
   "name": "dt",
-  "type": "TIMESTAMP",
+  "type": "INTEGER",
   "mode": "NULLABLE"
  },
  {
@@ -195,12 +195,12 @@
    },
    {
     "name": "sunrise",
-    "type": "TIMESTAMP",
+    "type": "INTEGER",
     "mode": "NULLABLE"
    },
    {
     "name": "sunset",
-    "type": "TIMESTAMP",
+    "type": "INTEGER",
     "mode": "NULLABLE"
    }
   ]
@@ -237,7 +237,7 @@
  },
  {
   "name": "publish_time",
-  "type": "TIMESTAMP",
+  "type": "INTEGER",
   "mode": "NULLABLE"
  },
  {

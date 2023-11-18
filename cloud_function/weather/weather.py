@@ -1,5 +1,4 @@
 import os
-import sys
 
 import functions_framework
 import requests
@@ -17,6 +16,7 @@ API_KEY: API Key for openweathermap.org
 PROJECT_ID: Current project ID
 TOPIC_ID: Topic ID of the published message
 '''
+
 
 @functions_framework.cloud_event
 def collect_weather_data(cloud_event: CloudEvent):

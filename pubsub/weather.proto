@@ -5,7 +5,7 @@ syntax = "proto3";
 //package weather;
 
 message Weather {
-//  option (gen_bq_schema.bigquery_opts).table_name = "event";
+//  option (gen_bq_schema.bigquery_opts).table_name = "weather";
 
   Coord coord = 1;
   repeated Weather weather = 2;
