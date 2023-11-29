@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+//import "bq_table.proto";
+//import "bq_field.proto";
+package bay_area_511;
+
+message Event {
+//  option (gen_bq_schema.bigquery_opts).table_name = "bay_area_511_event";
+  string url = 1;
+  string jurisdiction_url = 2;
+  string id = 3;
+  string status = 4;
+  string headline = 5;
+  string event_type = 6;
+  string severity = 7;
+  Point geography_point = 8 [json_name = "geography"];
+  optional Point closure_geometry_point = 22 [json_name = "closure_geometry"];
+  string created = 9;
+  string updated = 10;
+  Schedule schedule = 11;
+  optional string timezone = 12;
+  optional string description = 13;
+  repeated string event_subtypes = 14;
+  repeated string grouped_events = 15;
+  optional string detour = 16;
+  repeated Road roads = 17;
+  repeated Area areas = 18;
+  repeated string attachments = 19;
+  optional string source_type = 20;
+  optional string source_id = 21;
+
+  message Point {
+    repeated float coordinates = 1;
+    string type = 2;
+  }
+
+  message Road {
+    string name = 1;
+    optional string from = 2;
+    optional string to = 3;
+    optional string state = 4;
+    optional string direction = 5;
+    optional string impacted_lane_type = 6;
+    optional string road_advisory = 7;
+    optional string lane_status = 8;
+    optional string article = 9;
+    repeated Area areas = 10;
+    optional int32 lanes_open = 11;
+    optional int32 lanes_closed = 12;
+    repeated string impacted_systems = 13;
+    repeated Restriction restrictions = 14;
+  }
+
+  message Area {
+    int64 id = 1;
+    string name = 2;
+    string url = 3;
+  }
+
+  message Restriction {
+    string restriction_type = 1;
+    float value = 2;
+  }
+
+  message Schedule {
+    repeated RecurringSchedule recurring_schedules = 1;
+    repeated string exceptions = 2;
+    repeated string intervals = 3;
+
+    message RecurringSchedule {
+      string start_date = 1;
+      optional string end_date = 2;
+      optional string daily_start_time = 3;
+      optional string daily_end_time = 4;
+      repeated string days = 5;
+    }
+  }
+}
