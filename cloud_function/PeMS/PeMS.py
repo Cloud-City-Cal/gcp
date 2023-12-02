@@ -1,26 +1,49 @@
+import os
+from io import StringIO
+
 import requests
-from bs4 import BeautifulSoup
+import csv
+import datetime
+from cloudevents.http import CloudEvent
+from google.pubsub import PublisherClient
+
+from pems_pb2 import PeMS
+from google.protobuf import text_format
 
 BASE_URL = "https://pems.dot.ca.gov"
-USERNAME = ""
-PASSWORD = ""
-def insert_into_bigquery(request):
-    # station data could be downloaded from pems
-    # df = pd.read_csv("stations.csv", sep="\t")
-    # stations = df.iloc[:, 2]
+TIME_RANGE = 60 * 60  # 60 mins interval
+
+'''
+Environment Variables:
+USERNAME: Username for pems.dot.ca.gov
+PASSWORD: Password for pems.dot.ca.gov
+PROJECT_ID: Current project ID
+DATASET_ID: Dataset ID to check for existing records
+TABLE_ID: Table ID to check for existing records
+TOPIC_ID: Topic ID of the published message
+'''
+
+
+def insert_into_bigquery(cloud_event: CloudEvent):
     # Get the station id from big query or request
-    stations = []
+    stations = [401643]
 
     session = requests.Session()
     # Log in
     session.post(
         BASE_URL,
         data={
-            "username": USERNAME,
-            "password": PASSWORD,
+            "username": os.environ['USERNAME'],
+            "password": os.environ['PASSWORD'],
             "login": "Login",
         },
     )
+
+    # PeMS is timezone unaware, so we treat Pacific Time as UTC.
+    timestamp_now = int(datetime.datetime.now().replace(tzinfo=datetime.timezone.utc).timestamp())
+    publisher_client = PublisherClient()
+    topic_path = publisher_client.topic_path(os.environ['PROJECT_ID'], os.environ['TOPIC_ID'])
+
 
     # Crawl Data
     for station_id in stations:
@@ -28,15 +51,10 @@ def insert_into_bigquery(request):
             "report_form": 1,
             "dnode": "VDS",
             "content": "loops",
-            "tab": "det_timeseries",
-            "export": "",
+            "export": "text",
             "station_id": station_id,
-            # Get the data from the past 30 mins to now
-            "s_time_id": int(time.time()) - 30 * 60,
-            "e_time_id": int(time.time()),
-            "tod": "all",
-            "tod_from": 0,
-            "tod_to": 0,
+            "s_time_id": timestamp_now - TIME_RANGE,
+            "e_time_id": timestamp_now,
             "dow_0": "on",
             "dow_1": "on",
             "dow_2": "on",
@@ -44,9 +62,10 @@ def insert_into_bigquery(request):
             "dow_4": "on",
             "dow_5": "on",
             "dow_6": "on",
+            "dow_7": "on",
             "holidays": "on",
             "q": "speed",
-            "q2": "",
+            "q2": "flow",
             "gn": "5min",
             "agg": "on",
             "lane1": "on",
@@ -56,29 +75,17 @@ def insert_into_bigquery(request):
             "lane5": "on",
             "lane6": "on",
             "lane7": "on",
-            "html.x": 31,
-            "html.y": 7,
         }
         res = session.post(
             BASE_URL,
             params=params,
         )
-        soup = BeautifulSoup(res.text, "lxml")
-        table = soup.find("table",{"class": "inlayTable"})
-        tbody = table.find("tbody")
-        trs = tbody.find_all("tr")
-        # Iterate each row for different timestamp
-        for tr in trs:
-            tds = tr.find_all("td")
-            l = len(tds)
-            time = tds[0].text # string format
-            # if the data at a given timestamp exist in database:
-            #     break
-            insert_data = {"time": time}
-            insert_data["observed_percentage"] = tds[l-1].text
-            insert_data["lane_points"] = tds[l-2].text
-            insert_data["agg_speed"] = tds[l-3].text
-            for i in range(1, l-3):
-                insert_data[f"lane{i}"] = tds[i].text
-            # print(insert_data)
-            # insert data into database
+        res.raise_for_status()
+        reader = csv.DictReader(StringIO(res.text), delimiter="\t", quoting=csv.QUOTE_NONE)
+        for row in reader:
+            lanes_len = int(row["# Lane Points"])
+            data = PeMS(station_id=station_id, time=row["5 Minutes"], lanes=[])
+            for i in range(1, lanes_len + 1):
+                data.lanes.append(PeMS.Lane(speed=float(row[f"Lane {i} Speed (mph)"]), flow=float(row[f"Lane {i} Flow (Veh/5 Minutes)"])))
+            publisher_client.publish(topic_path, data.SerializeToString())
+
