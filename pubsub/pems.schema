@@ -1,0 +1,54 @@
+[
+ {
+  "name": "station_id",
+  "type": "INTEGER",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "time",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "lanes",
+  "type": "RECORD",
+  "mode": "REPEATED",
+  "fields": [
+   {
+    "name": "speed",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+   },
+   {
+    "name": "flow",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+   }
+  ]
+ },
+ {
+  "name": "observed",
+  "type": "FLOAT",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "subscription_name",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "message_id",
+  "type": "STRING",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "publish_time",
+  "type": "INTEGER",
+  "mode": "NULLABLE"
+ },
+ {
+  "name": "attributes",
+  "type": "JSON",
+  "mode": "NULLABLE"
+ }
+]
