@@ -26,13 +26,14 @@ https://511.org/sites/default/files/2023-10/511%20SF%20Bay%20Open%20Data%20Speci
 @functions_framework.cloud_event
 def collect_bay_area_511_event_data(cloud_event: CloudEvent):
     publisher_client = PublisherClient()
+    topic_path = publisher_client.topic_path(os.environ['PROJECT_ID'], os.environ['TOPIC_ID'])
 
     events = get_all_events()
     missing_ids = get_missing_record_ids(set(map(lambda x: (x['id'], x['headline']), events)))
 
     for event in filter(lambda event: event['id'] in missing_ids, events):
         proto = ParseDict(clean_up_keys(event), Event(), ignore_unknown_fields=True)
-        topic_path = publisher_client.topic_path(os.environ['PROJECT_ID'], os.environ['TOPIC_ID'])
+
         publisher_client.publish(topic_path, proto.SerializeToString())
 
 

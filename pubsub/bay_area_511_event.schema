@@ -295,7 +295,7 @@
   "type": "STRING",
   "mode": "NULLABLE"
  },
-  {
+ {
   "name": "subscription_name",
   "type": "STRING",
   "mode": "NULLABLE"
