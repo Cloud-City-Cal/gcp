@@ -12,7 +12,7 @@ protoc --proto_path=/path/to/protoc-gen-bq-schema --proto_path=. --bq-schema_out
 
 ## Cloud Function
 
-To regenerate the `*_pb2.py` files for Cloud Functions, run
+To regenerate the `*_pb2.py` and `_pb2.pyi` files for Cloud Functions, run
 ```bash
-protoc --proto_path=. --python_out=. xxxx.proto
+protoc --proto_path=. --python_out=. --mypy_out=. xxxx.proto
 ```

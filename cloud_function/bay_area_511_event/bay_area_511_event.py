@@ -1,5 +1,5 @@
 import os
-from typing import List, Set
+from typing import List, Set, Tuple
 
 import functions_framework
 import requests
@@ -26,13 +26,14 @@ https://511.org/sites/default/files/2023-10/511%20SF%20Bay%20Open%20Data%20Speci
 @functions_framework.cloud_event
 def collect_bay_area_511_event_data(cloud_event: CloudEvent):
     publisher_client = PublisherClient()
+    topic_path = publisher_client.topic_path(os.environ['PROJECT_ID'], os.environ['TOPIC_ID'])
 
     events = get_all_events()
-    missing_ids = get_missing_record_ids(set(map(lambda x: x['id'], events)))
+    missing_ids = get_missing_record_ids(set(map(lambda x: (x['id'], x['headline']), events)))
 
     for event in filter(lambda event: event['id'] in missing_ids, events):
         proto = ParseDict(clean_up_keys(event), Event(), ignore_unknown_fields=True)
-        topic_path = publisher_client.topic_path(os.environ['PROJECT_ID'], os.environ['TOPIC_ID'])
+
         publisher_client.publish(topic_path, proto.SerializeToString())
 
 
@@ -57,33 +58,36 @@ def get_all_events() -> List:
             return events
 
 
-def get_missing_record_ids(ids: Set) -> Set:
-    client = bigquery.Client()
+def get_missing_record_ids(id_updated_tuple: Set[Tuple[str, str]]) -> Set:
+    client = bigquery.Client(project=os.environ['PROJECT_ID'])
     job_config = bigquery.QueryJobConfig(
         query_parameters=[
-            bigquery.ArrayQueryParameter("ids", "STRING", ids),
-        ]
+            bigquery.ArrayQueryParameter("ids", "STRING", [data[0] for data in id_updated_tuple]),
+        ],
     )
 
     query_job = client.query(
         f"""
-        SELECT id
+        SELECT id, headline
         FROM {os.environ['PROJECT_ID']}.{os.environ['DATASET_ID']}.{os.environ['TABLE_ID']}
         WHERE id in UNNEST(@ids)
         """, job_config=job_config)
 
     result = query_job.result()
-    existing_ids = set(map(lambda x: x.id, result))
-    return ids - existing_ids
+    existing_tuples = set(map(lambda x: (x.id, x.headline), result))
+    return {data[0] for data in id_updated_tuple - existing_tuples}
 
 
-def clean_up_keys(data: dict):
-    for key in list(data.keys()):
-        if isinstance(data[key], dict):
+def clean_up_keys(data: dict | list):
+    if isinstance(data, dict):
+        for key in list(data.keys()):
             data[key] = clean_up_keys(data[key])
 
-        if key[0] == "+":
-            data[key[1:]] = data[key]
-            del data[key]
+            if key[0] == "+":
+                data[key[1:]] = data[key]
+                del data[key]
+    elif isinstance(data, list):
+        for item in data:
+            clean_up_keys(item)
 
     return data

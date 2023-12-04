@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+//import "bq_table.proto";
+//import "bq_field.proto";
+//package pems;
+
+message PeMS {
+//  option (gen_bq_schema.bigquery_opts).table_name = "pems";
+
+  uint32 station_id = 1;
+  string time = 2;
+  repeated Lane lanes = 3;
+  float observed = 4;
+
+  message Lane {
+    float speed = 1;
+    float flow = 2;
+  }
+}
