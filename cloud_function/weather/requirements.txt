@@ -2,3 +2,4 @@ cloudevents==1.*
 functions-framework==3.*
 google-cloud-pubsub==2.*
 protobuf==4.*
+google-cloud-bigquery==3.*
