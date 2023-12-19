@@ -1,10 +1,9 @@
 import os
-from typing import List, Set, Tuple
+from typing import List
 
 import functions_framework
 import requests
 from cloudevents.http import CloudEvent
-from google.cloud import bigquery
 from google.cloud.pubsub import PublisherClient
 from google.protobuf.json_format import ParseDict
 
@@ -16,8 +15,6 @@ API_ENDPOINT = "https://api.511.org/traffic/events"
 Environment Variables:
 API_KEY: API Key for 511.org
 PROJECT_ID: Current project ID
-DATASET_ID: Dataset ID to check for existing records
-TABLE_ID: Table ID to check for existing records
 TOPIC_ID: Topic ID of the published message
 https://511.org/sites/default/files/2023-10/511%20SF%20Bay%20Open%20Data%20Specification%20-%20Traffic.pdf
 '''
@@ -29,9 +26,7 @@ def collect_bay_area_511_event_data(cloud_event: CloudEvent):
     topic_path = publisher_client.topic_path(os.environ['PROJECT_ID'], os.environ['TOPIC_ID'])
 
     events = get_all_events()
-    missing_ids = get_missing_record_ids(set(map(lambda x: (x['id'], x['headline']), events)))
-
-    for event in filter(lambda event: event['id'] in missing_ids, events):
+    for event in events:
         proto = ParseDict(clean_up_keys(event), Event(), ignore_unknown_fields=True)
 
         publisher_client.publish(topic_path, proto.SerializeToString())
@@ -56,26 +51,6 @@ def get_all_events() -> List:
             offset += 20
         else:
             return events
-
-
-def get_missing_record_ids(id_updated_tuple: Set[Tuple[str, str]]) -> Set:
-    client = bigquery.Client(project=os.environ['PROJECT_ID'])
-    job_config = bigquery.QueryJobConfig(
-        query_parameters=[
-            bigquery.ArrayQueryParameter("ids", "STRING", [data[0] for data in id_updated_tuple]),
-        ],
-    )
-
-    query_job = client.query(
-        f"""
-        SELECT id, headline
-        FROM {os.environ['PROJECT_ID']}.{os.environ['DATASET_ID']}.{os.environ['TABLE_ID']}
-        WHERE id in UNNEST(@ids)
-        """, job_config=job_config)
-
-    result = query_job.result()
-    existing_tuples = set(map(lambda x: (x.id, x.headline), result))
-    return {data[0] for data in id_updated_tuple - existing_tuples}
 
 
 def clean_up_keys(data: dict | list):
